@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { profile } from "@/data/profile";
 
 export function HeroSection() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const mouseRef   = useRef({ x: -999, y: -999 });
   const [mounted, setMounted] = useState(false);
-  const mouseRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => { setMounted(true); }, []);
 
+  /* ── Particle + dot-grid canvas ───────────────── */
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -17,210 +18,154 @@ export function HeroSection() {
     if (!ctx) return;
 
     let animId: number;
-    let particles: Array<{
-      x: number; y: number; vx: number; vy: number;
-      size: number; opacity: number; life: number;
-    }> = [];
+    type Particle = { x:number; y:number; vx:number; vy:number; size:number; life:number };
+    let particles: Particle[] = [];
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
     resize();
     window.addEventListener("resize", resize);
 
-    const onMouseMove = (e: MouseEvent) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
-    };
-    window.addEventListener("mousemove", onMouseMove);
-
-    const spawnParticle = () => {
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-      particles.push({
-        x: mx + (Math.random() - 0.5) * 60,
-        y: my + (Math.random() - 0.5) * 60,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5 - 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.5 + 0.15,
-        life: 1,
-      });
-    };
+    const onMove = (e: MouseEvent) => { mouseRef.current = { x: e.clientX, y: e.clientY }; };
+    window.addEventListener("mousemove", onMove);
 
     let frame = 0;
-    const draw = () => {
+    const tick = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (frame % 3 === 0) spawnParticle();
       frame++;
 
-      particles = particles.filter((p) => p.life > 0.01);
+      /* spawn particle near cursor */
+      if (frame % 4 === 0) {
+        particles.push({
+          x: mouseRef.current.x + (Math.random()-0.5)*50,
+          y: mouseRef.current.y + (Math.random()-0.5)*50,
+          vx: (Math.random()-0.5)*0.4,
+          vy: (Math.random()-0.5)*0.4 - 0.25,
+          size: Math.random()*1.8 + 0.4,
+          life: 1,
+        });
+      }
+
+      /* draw + decay particles */
+      particles = particles.filter(p => p.life > 0.02);
       for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life *= 0.96;
-        p.opacity = p.life * 0.4;
+        p.x += p.vx; p.y += p.vy; p.life *= 0.95;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(26, 107, 60, ${p.opacity})`;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(184,146,42,${p.life * 0.45})`;
         ctx.fill();
       }
 
-      // Grid dots - light version
-      const spacing = 60;
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-      for (let x = 0; x < canvas.width; x += spacing) {
-        for (let y = 0; y < canvas.height; y += spacing) {
-          const dist = Math.hypot(x - mx, y - my);
-          const influence = Math.max(0, 1 - dist / 300);
-          const size = 0.8 + influence * 2;
-          const opacity = 0.06 + influence * 0.2;
+      /* dot grid reacting to cursor */
+      const { x: mx, y: my } = mouseRef.current;
+      const gap = 64;
+      for (let gx = 0; gx < canvas.width + gap; gx += gap) {
+        for (let gy = 0; gy < canvas.height + gap; gy += gap) {
+          const d = Math.hypot(gx - mx, gy - my);
+          const inf = Math.max(0, 1 - d / 280);
           ctx.beginPath();
-          ctx.arc(x, y, size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(26, 107, 60, ${opacity})`;
+          ctx.arc(gx, gy, 0.75 + inf*1.8, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(184,146,42,${0.07 + inf*0.28})`;
           ctx.fill();
         }
       }
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
 
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMouseMove);
+      animId = requestAnimationFrame(tick);
     };
+    tick();
+
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); window.removeEventListener("mousemove", onMove); };
   }, []);
 
-  const handleScrollDown = () => {
-    const el = document.getElementById("projects");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-20">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        aria-hidden="true"
-      />
+      {/* Canvas */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden />
 
-      {/* Radial gradient - light version */}
+      {/* Warm radial vignette */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 50% at 50% 60%, rgba(26,107,60,0.04) 0%, transparent 70%)",
-        }}
-        aria-hidden="true"
+        style={{ background:"radial-gradient(ellipse 90% 60% at 50% 55%, rgba(184,146,42,0.04) 0%, transparent 75%)" }}
+        aria-hidden
       />
 
       <div className="relative z-10 max-w-[1200px] mx-auto px-6 w-full">
-        {/* Tag line */}
+
+        {/* Thin decorative rule above name */}
         <div
-          className={`flex items-center gap-3 mb-10 transition-all duration-700 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-          style={{ transitionDelay: "100ms" }}
+          className={`flex items-center gap-4 mb-8 transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          style={{ transitionDelay:"80ms" }}
         >
-          <span className="section-label">Portfolio</span>
-          <span className="glow-line flex-1 max-w-[80px]" />
-          <span className="font-mono text-[0.6rem] text-muted tracking-widest">v2.0</span>
+          <div className="gold-line w-12" />
+          <span className="section-label">Technical Program Manager · Builder</span>
+          <div className="gold-line flex-1 max-w-[60px]" />
         </div>
 
-        {/* Name - first line */}
-        <div className="overflow-hidden mb-2">
+        {/* Name — two-line editorial treatment */}
+        <div className="overflow-hidden mb-1">
           <h1
-            className={`font-display text-primary transition-all duration-1000 ${
-              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
-            }`}
-            style={{
-              fontSize: "clamp(4.5rem, 13vw, 14rem)",
-              lineHeight: "0.87",
-              letterSpacing: "-0.04em",
-              transitionDelay: "200ms",
-            }}
+            className={`font-display text-ink leading-[0.87] transition-all duration-1000 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"}`}
+            style={{ fontSize:"clamp(4.5rem,13vw,14rem)", letterSpacing:"-0.035em", transitionDelay:"200ms", fontWeight:300 }}
           >
             Vaibhav
           </h1>
         </div>
-
-        {/* Name - second line, outline style */}
-        <div className="overflow-hidden mb-8">
+        <div className="overflow-hidden mb-10">
           <h1
-            className={`font-display italic transition-all duration-1000 ${
-              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
-            }`}
+            className={`font-display italic leading-[0.87] transition-all duration-1000 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"}`}
             style={{
-              fontSize: "clamp(4.5rem, 13vw, 14rem)",
-              lineHeight: "0.87",
-              letterSpacing: "-0.04em",
-              transitionDelay: "350ms",
-              WebkitTextStroke: "1.5px rgba(26,23,20,0.25)",
-              color: "transparent",
+              fontSize:"clamp(4.5rem,13vw,14rem)", letterSpacing:"-0.035em", transitionDelay:"340ms",
+              fontWeight:300, color:"transparent",
+              WebkitTextStroke:"1.5px rgba(28,22,8,0.28)",
             }}
           >
             Dhanorkar
           </h1>
         </div>
 
-        {/* Tagline + stats */}
+        {/* Tagline row */}
         <div
-          className={`flex flex-col md:flex-row md:items-end justify-between gap-8 transition-all duration-700 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-          style={{ transitionDelay: "550ms" }}
+          className={`flex flex-col md:flex-row md:items-end justify-between gap-10 transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          style={{ transitionDelay:"520ms" }}
         >
-          <div className="max-w-md">
-            <p className="text-secondary text-base md:text-lg leading-relaxed font-sans font-light">
-              {profile.bio}
-            </p>
-          </div>
+          <p className="text-ink-soft text-base md:text-lg leading-relaxed font-light max-w-md font-sans">
+            {profile.bio}
+          </p>
 
-          <div className="flex gap-8 md:gap-12 shrink-0">
-            {profile.stats.map((stat, i) => (
-              <div key={i} className="text-center md:text-right">
-                <div className="font-display text-3xl md:text-4xl text-accent leading-none mb-1">
-                  {stat.value}
+          {/* Stats */}
+          <div className="flex gap-10 shrink-0">
+            {profile.stats.map((s, i) => (
+              <div key={i} className="text-right">
+                <div className="font-display text-3xl md:text-4xl text-gold leading-none mb-1" style={{ fontWeight:400 }}>
+                  {s.value}
                 </div>
-                <div className="font-mono text-[0.6rem] text-muted tracking-widest uppercase">
-                  {stat.label}
-                </div>
+                <div className="section-label text-ink-muted">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* CTA row */}
+        {/* CTAs */}
         <div
-          className={`flex flex-wrap items-center gap-4 mt-12 transition-all duration-700 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-          style={{ transitionDelay: "700ms" }}
+          className={`flex flex-wrap items-center gap-4 mt-12 transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          style={{ transitionDelay:"680ms" }}
         >
           <button
-            onClick={handleScrollDown}
-            className="magnetic-btn group flex items-center gap-3 bg-accent text-white px-8 py-4 font-mono text-sm font-medium tracking-wider uppercase hover:bg-accent-dim transition-colors duration-200"
+            onClick={() => scrollTo("projects")}
+            className="magnetic-btn group flex items-center gap-3 bg-ink text-ivory px-8 py-4 font-sans text-sm font-medium tracking-wider uppercase hover:bg-ink-mid transition-colors duration-300"
           >
-            View Projects
+            View Portfolio
             <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
           </button>
 
-          <a
-            href={profile.social.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-4 border border-border text-secondary text-sm font-mono tracking-wider uppercase hover:border-accent hover:text-accent transition-all duration-200"
-          >
+          <a href={profile.social.linkedin} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 px-6 py-4 border border-border text-ink-soft text-sm font-sans tracking-wider uppercase hover:border-gold hover:text-gold transition-all duration-200">
             LinkedIn ↗
           </a>
-          <a
-            href={profile.social.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-4 border border-border text-secondary text-sm font-mono tracking-wider uppercase hover:border-accent hover:text-accent transition-all duration-200"
-          >
+          <a href={profile.social.github} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 px-6 py-4 border border-border text-ink-soft text-sm font-sans tracking-wider uppercase hover:border-gold hover:text-gold transition-all duration-200">
             GitHub ↗
           </a>
         </div>
@@ -228,27 +173,14 @@ export function HeroSection() {
 
       {/* Scroll indicator */}
       <div
-        className={`absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-all duration-700 ${
-          mounted ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ transitionDelay: "1000ms" }}
+        className={`absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-opacity duration-700 ${mounted ? "opacity-100" : "opacity-0"}`}
+        style={{ transitionDelay:"1100ms" }}
       >
-        <span className="font-mono text-[0.6rem] text-muted tracking-[0.3em] uppercase">Scroll</span>
+        <span className="section-label text-ink-faint">Scroll</span>
         <div className="w-px h-10 overflow-hidden bg-border">
-          <div
-            className="w-full bg-accent"
-            style={{ height: "100%", animation: "scrollLine 2s ease-in-out infinite" }}
-          />
+          <div className="w-full h-full bg-gold" style={{ animation:"scrollTick 2s ease-in-out infinite" }} />
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes scrollLine {
-          0% { transform: translateY(-100%); }
-          50% { transform: translateY(0); }
-          100% { transform: translateY(100%); }
-        }
-      `}</style>
     </section>
   );
 }

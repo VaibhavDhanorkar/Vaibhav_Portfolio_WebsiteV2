@@ -3,6 +3,7 @@ export type Project = {
   title: string;
   subtitle: string;
   status: string;
+  category: "Professional" | "Personal";
   description: string;
   purpose: string;
   icon: string;
@@ -23,6 +24,7 @@ export const projects: Project[] = [
     title: "CJI",
     subtitle: "Conversational Jira Intelligence",
     status: "V1 Live",
+    category: "Professional",
     icon: "🧠",
     description:
       "A full-stack web application that transforms Jira project data into an interactive, conversational intelligence platform. Ask questions in plain English, get instant answers backed by SQL, ML-powered intent classification, and a 4-agent pipeline — all in under 7ms.",
@@ -41,13 +43,14 @@ export const projects: Project[] = [
     tags: ["AI", "Productivity", "Full-Stack"],
     techStack: ["Python", "FastAPI", "HTMX", "ML/NLP", "SQLite", "Chart.js", "Docker"],
     featured: true,
-    year: 2024,
+    year: 2025,
   },
   {
     slug: "velox",
     title: "Velox",
     subtitle: "Private Intelligence Layer for Solana Trading",
     status: "V1 Active",
+    category: "Personal",
     icon: "⚡",
     description:
       "A self-hosted, invite-only signal platform that identifies high-conviction trading opportunities on Solana by tracking coordinated wallet behavior — the kind of edge that no public platform exposes.",
@@ -66,7 +69,7 @@ export const projects: Project[] = [
     tags: ["Blockchain", "AI", "Finance"],
     techStack: ["Python", "Solana", "WebSocket", "Telegram", "Private Dashboard"],
     featured: true,
-    year: 2024,
+    year: 2026,
   },
 ];
 

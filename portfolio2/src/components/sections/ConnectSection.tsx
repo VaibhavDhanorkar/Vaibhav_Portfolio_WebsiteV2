@@ -3,39 +3,21 @@
 import { useRef } from "react";
 import { profile } from "@/data/profile";
 
-function MagneticButton({
-  children, href, className, external,
-}: {
-  children: React.ReactNode;
-  href: string;
-  className?: string;
-  external?: boolean;
+function MagneticBtn({ children, href, className, external }: {
+  children: React.ReactNode; href: string; className?: string; external?: boolean;
 }) {
-  const btnRef = useRef<HTMLAnchorElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const btn = btnRef.current;
-    if (!btn) return;
-    const rect = btn.getBoundingClientRect();
-    const dx = (e.clientX - (rect.left + rect.width / 2)) * 0.3;
-    const dy = (e.clientY - (rect.top + rect.height / 2)) * 0.3;
-    btn.style.transform = `translate(${dx}px, ${dy}px)`;
+  const ref = useRef<HTMLAnchorElement>(null);
+  const onMove = (e: React.MouseEvent) => {
+    const el = ref.current; if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.transform = `translate(${(e.clientX-(r.left+r.width/2))*0.28}px,${(e.clientY-(r.top+r.height/2))*0.28}px)`;
   };
-
-  const handleMouseLeave = () => {
-    if (btnRef.current) btnRef.current.style.transform = "translate(0, 0)";
-  };
+  const onLeave = () => { if (ref.current) ref.current.style.transform = "translate(0,0)"; };
 
   return (
-    <a
-      ref={btnRef}
-      href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noopener noreferrer" : undefined}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className={`magnetic-btn inline-flex items-center gap-3 transition-transform duration-300 ease-out ${className ?? ""}`}
-    >
+    <a ref={ref} href={href} target={external?"_blank":undefined} rel={external?"noopener noreferrer":undefined}
+      onMouseMove={onMove} onMouseLeave={onLeave}
+      className={`magnetic-btn inline-flex items-center gap-3 ${className??""}`}>
       {children}
     </a>
   );
@@ -43,71 +25,51 @@ function MagneticButton({
 
 export function ConnectSection() {
   return (
-    <section id="connect" className="py-32 px-6 bg-surface/50">
+    <section id="connect" className="py-32 px-6 bg-ivory-dark/40">
       <div className="max-w-[1200px] mx-auto">
         <div className="section-label mb-4">Get in Touch</div>
 
+        {/* Big headline */}
         <div className="mb-16">
-          <h2
-            className="font-display text-primary leading-[0.9] mb-6"
-            style={{ fontSize: "clamp(3rem, 8vw, 8rem)", letterSpacing: "-0.04em" }}
-          >
+          <h2 className="font-display text-ink leading-[0.88] mb-6"
+            style={{ fontSize:"clamp(3rem,8vw,8rem)", letterSpacing:"-0.035em", fontWeight:300 }}>
             Let&apos;s build
             <br />
-            <span
-              className="italic"
-              style={{ WebkitTextStroke: "1.5px rgba(26,23,20,0.25)", color: "transparent" }}
-            >
+            <span className="italic" style={{ color:"transparent", WebkitTextStroke:"1.5px rgba(28,22,8,0.28)" }}>
               something.
             </span>
           </h2>
-          <p className="text-secondary font-light max-w-md text-base leading-relaxed">
-            Whether you&apos;re looking for a Technical Program Manager, want to collaborate on a
-            project, or just want to talk tech — reach out.
+          <p className="text-ink-soft font-light max-w-md text-base leading-relaxed">
+            Whether you&apos;re looking for a Technical Program Manager, want to collaborate on a project,
+            or just want to talk tech — reach out.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border mb-16 shadow-sm">
+        {/* Links grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 border border-border shadow-sm mb-14">
           {[
-            {
-              category: "Profile",
-              links: [
-                { label: "LinkedIn", href: profile.social.linkedin, external: true },
-                { label: "GitHub", href: profile.social.github, external: true },
-                { label: "Email", href: `mailto:${profile.email}`, external: false },
-              ],
-            },
-            {
-              category: "Projects",
-              links: [
-                { label: "CJI — Conversational Jira Intelligence", href: "/projects/cji", external: false },
-                { label: "Velox — Dashboard", href: "/projects/velox", external: false },
-              ],
-            },
-            {
-              category: "Quick Hire",
-              links: [
-                { label: "Download Resume", href: "#", external: false },
-                { label: "Schedule a Call", href: `mailto:${profile.email}`, external: false },
-              ],
-            },
-          ].map((group) => (
-            <div
-              key={group.category}
-              className="p-8 border-b md:border-b-0 md:border-r border-border last:border-r-0 bg-white"
-            >
-              <div className="section-label mb-6">{group.category}</div>
+            { category:"Profile", links:[
+              { label:"LinkedIn", href:profile.social.linkedin, ext:true },
+              { label:"GitHub",   href:profile.social.github,   ext:true },
+              { label:"Email",    href:`mailto:${profile.email}`, ext:false },
+            ]},
+            { category:"Projects", links:[
+              { label:"CJI — Conversational Jira Intelligence", href:"/projects/cji", ext:false },
+              { label:"Velox — Private Signal Platform",        href:"/projects/velox", ext:false },
+            ]},
+            { category:"Quick Hire", links:[
+              { label:"Download Resume",  href:"#", ext:false },
+              { label:"Schedule a Call",  href:`mailto:${profile.email}`, ext:false },
+            ]},
+          ].map(g => (
+            <div key={g.category} className="p-8 border-b md:border-b-0 md:border-r border-border last:border-r-0 bg-ivory">
+              <div className="section-label mb-6">{g.category}</div>
               <div className="space-y-4">
-                {group.links.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noopener noreferrer" : undefined}
-                    className="flex items-center justify-between group text-secondary hover:text-primary transition-colors duration-200 text-sm font-light"
-                  >
-                    <span>{link.label}</span>
-                    <span className="text-muted group-hover:text-accent transition-colors duration-200 group-hover:translate-x-1 transition-transform">→</span>
+                {g.links.map(l => (
+                  <a key={l.label} href={l.href} target={l.ext?"_blank":undefined} rel={l.ext?"noopener noreferrer":undefined}
+                    className="flex items-center justify-between group text-ink-soft hover:text-ink transition-colors duration-200 text-sm font-light">
+                    <span>{l.label}</span>
+                    <span className="text-ink-faint group-hover:text-gold group-hover:translate-x-1 transition-all duration-200">→</span>
                   </a>
                 ))}
               </div>
@@ -115,20 +77,17 @@ export function ConnectSection() {
           ))}
         </div>
 
+        {/* Magnetic CTA */}
         <div className="flex flex-col md:flex-row items-center gap-8">
-          <MagneticButton
-            href={`mailto:${profile.email}`}
-            className="group bg-accent text-white px-10 py-5 font-mono text-sm font-medium tracking-wider uppercase hover:bg-accent-dim"
-          >
+          <MagneticBtn href={`mailto:${profile.email}`}
+            className="group bg-ink text-ivory px-10 py-5 font-sans text-sm font-medium tracking-wider uppercase hover:bg-ink-mid">
             Send a Message
             <span className="group-hover:translate-x-1 transition-transform duration-200">↗</span>
-          </MagneticButton>
+          </MagneticBtn>
 
-          <div className="flex items-center gap-4">
-            <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="font-mono text-xs text-muted tracking-wider">
-              Available for new opportunities
-            </span>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-gold animate-pulse" />
+            <span className="font-mono text-xs text-ink-muted tracking-wider">Available for new opportunities</span>
           </div>
         </div>
       </div>
