@@ -8,9 +8,7 @@ export function HeroSection() {
   const [mounted, setMounted] = useState(false);
   const mouseRef = useRef({ x: 0, y: 0 });
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,7 +43,7 @@ export function HeroSection() {
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5 - 0.3,
         size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.6 + 0.2,
+        opacity: Math.random() * 0.5 + 0.15,
         life: 1,
       });
     };
@@ -53,7 +51,6 @@ export function HeroSection() {
     let frame = 0;
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       if (frame % 3 === 0) spawnParticle();
       frame++;
 
@@ -62,15 +59,14 @@ export function HeroSection() {
         p.x += p.vx;
         p.y += p.vy;
         p.life *= 0.96;
-        p.opacity = p.life * 0.5;
-
+        p.opacity = p.life * 0.4;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(200, 255, 0, ${p.opacity})`;
+        ctx.fillStyle = `rgba(26, 107, 60, ${p.opacity})`;
         ctx.fill();
       }
 
-      // Grid dots
+      // Grid dots - light version
       const spacing = 60;
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
@@ -79,14 +75,13 @@ export function HeroSection() {
           const dist = Math.hypot(x - mx, y - my);
           const influence = Math.max(0, 1 - dist / 300);
           const size = 0.8 + influence * 2;
-          const opacity = 0.08 + influence * 0.25;
+          const opacity = 0.06 + influence * 0.2;
           ctx.beginPath();
           ctx.arc(x, y, size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(200, 255, 0, ${opacity})`;
+          ctx.fillStyle = `rgba(26, 107, 60, ${opacity})`;
           ctx.fill();
         }
       }
-
       animId = requestAnimationFrame(draw);
     };
     draw();
@@ -105,19 +100,18 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-20">
-      {/* Interactive canvas background */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
         aria-hidden="true"
       />
 
-      {/* Radial gradient overlay */}
+      {/* Radial gradient - light version */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 80% 50% at 50% 60%, rgba(200,255,0,0.04) 0%, transparent 70%), radial-gradient(ellipse at top, rgba(8,8,8,0) 0%, rgba(8,8,8,0.8) 100%)",
+            "radial-gradient(ellipse 80% 50% at 50% 60%, rgba(26,107,60,0.04) 0%, transparent 70%)",
         }}
         aria-hidden="true"
       />
@@ -135,10 +129,10 @@ export function HeroSection() {
           <span className="font-mono text-[0.6rem] text-muted tracking-widest">v2.0</span>
         </div>
 
-        {/* Big name */}
+        {/* Name - first line */}
         <div className="overflow-hidden mb-2">
           <h1
-            className={`font-display transition-all duration-1000 ${
+            className={`font-display text-primary transition-all duration-1000 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
             }`}
             style={{
@@ -148,12 +142,14 @@ export function HeroSection() {
               transitionDelay: "200ms",
             }}
           >
-            <span className="block text-primary">Vaibhav</span>
+            Vaibhav
           </h1>
         </div>
+
+        {/* Name - second line, outline style */}
         <div className="overflow-hidden mb-8">
           <h1
-            className={`font-display transition-all duration-1000 ${
+            className={`font-display italic transition-all duration-1000 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
             }`}
             style={{
@@ -161,21 +157,15 @@ export function HeroSection() {
               lineHeight: "0.87",
               letterSpacing: "-0.04em",
               transitionDelay: "350ms",
+              WebkitTextStroke: "1.5px rgba(26,23,20,0.25)",
+              color: "transparent",
             }}
           >
-            <span
-              className="block italic"
-              style={{
-                WebkitTextStroke: "1px rgba(240,236,228,0.3)",
-                color: "transparent",
-              }}
-            >
-              Dhanorkar
-            </span>
+            Dhanorkar
           </h1>
         </div>
 
-        {/* Tagline row */}
+        {/* Tagline + stats */}
         <div
           className={`flex flex-col md:flex-row md:items-end justify-between gap-8 transition-all duration-700 ${
             mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
@@ -188,7 +178,6 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Stats */}
           <div className="flex gap-8 md:gap-12 shrink-0">
             {profile.stats.map((stat, i) => (
               <div key={i} className="text-center md:text-right">
@@ -212,7 +201,7 @@ export function HeroSection() {
         >
           <button
             onClick={handleScrollDown}
-            className="magnetic-btn group flex items-center gap-3 bg-accent text-bg px-8 py-4 font-mono text-sm font-medium tracking-wider uppercase hover:bg-accent-dim transition-colors duration-200"
+            className="magnetic-btn group flex items-center gap-3 bg-accent text-white px-8 py-4 font-mono text-sm font-medium tracking-wider uppercase hover:bg-accent-dim transition-colors duration-200"
           >
             View Projects
             <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
@@ -222,7 +211,7 @@ export function HeroSection() {
             href={profile.social.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-4 border border-border-light text-secondary text-sm font-mono tracking-wider uppercase hover:border-accent hover:text-accent transition-all duration-200"
+            className="flex items-center gap-2 px-6 py-4 border border-border text-secondary text-sm font-mono tracking-wider uppercase hover:border-accent hover:text-accent transition-all duration-200"
           >
             LinkedIn ↗
           </a>
@@ -230,7 +219,7 @@ export function HeroSection() {
             href={profile.social.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-4 border border-border-light text-secondary text-sm font-mono tracking-wider uppercase hover:border-accent hover:text-accent transition-all duration-200"
+            className="flex items-center gap-2 px-6 py-4 border border-border text-secondary text-sm font-mono tracking-wider uppercase hover:border-accent hover:text-accent transition-all duration-200"
           >
             GitHub ↗
           </a>
@@ -245,13 +234,10 @@ export function HeroSection() {
         style={{ transitionDelay: "1000ms" }}
       >
         <span className="font-mono text-[0.6rem] text-muted tracking-[0.3em] uppercase">Scroll</span>
-        <div className="w-px h-10 overflow-hidden">
+        <div className="w-px h-10 overflow-hidden bg-border">
           <div
             className="w-full bg-accent"
-            style={{
-              height: "100%",
-              animation: "scrollLine 2s ease-in-out infinite",
-            }}
+            style={{ height: "100%", animation: "scrollLine 2s ease-in-out infinite" }}
           />
         </div>
       </div>

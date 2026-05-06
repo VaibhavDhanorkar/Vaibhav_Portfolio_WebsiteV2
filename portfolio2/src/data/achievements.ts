@@ -5,7 +5,17 @@ export type Achievement = {
   org: string;
   detail: string;
   year?: string;
-  type: "award" | "certification" | "education" | "membership";
+  type: "award" | "certification" | "membership";
+};
+
+export type Education = {
+  id: string;
+  icon: string;
+  degree: string;
+  field: string;
+  institution: string;
+  detail: string;
+  type: "masters" | "bachelors" | "certification";
 };
 
 export const achievements: Achievement[] = [
@@ -35,20 +45,25 @@ export const achievements: Achievement[] = [
     year: "Q4 2024",
     type: "award",
   },
+];
+
+export const education: Education[] = [
   {
     id: "ms",
     icon: "🎓",
-    title: "M.S. IT Project Management",
-    org: "Master of Science",
+    degree: "M.S.",
+    field: "IT Project Management",
+    institution: "Master of Science",
     detail: "Graduate degree focused on enterprise technology program management and leadership.",
-    type: "education",
+    type: "masters",
   },
   {
     id: "be",
     icon: "🎓",
-    title: "B.E. Computer Science & Engineering",
-    org: "Bachelor of Engineering",
+    degree: "B.E.",
+    field: "Computer Science & Engineering",
+    institution: "Bachelor of Engineering",
     detail: "Foundational degree in computer science, software engineering, and systems design.",
-    type: "education",
+    type: "bachelors",
   },
 ];

@@ -4,10 +4,7 @@ import { useRef } from "react";
 import { profile } from "@/data/profile";
 
 function MagneticButton({
-  children,
-  href,
-  className,
-  external,
+  children, href, className, external,
 }: {
   children: React.ReactNode;
   href: string;
@@ -20,17 +17,13 @@ function MagneticButton({
     const btn = btnRef.current;
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const dx = (e.clientX - cx) * 0.3;
-    const dy = (e.clientY - cy) * 0.3;
+    const dx = (e.clientX - (rect.left + rect.width / 2)) * 0.3;
+    const dy = (e.clientY - (rect.top + rect.height / 2)) * 0.3;
     btn.style.transform = `translate(${dx}px, ${dy}px)`;
   };
 
   const handleMouseLeave = () => {
-    const btn = btnRef.current;
-    if (!btn) return;
-    btn.style.transform = "translate(0, 0)";
+    if (btnRef.current) btnRef.current.style.transform = "translate(0, 0)";
   };
 
   return (
@@ -50,11 +43,10 @@ function MagneticButton({
 
 export function ConnectSection() {
   return (
-    <section id="connect" className="py-32 px-6 bg-surface/30">
+    <section id="connect" className="py-32 px-6 bg-surface/50">
       <div className="max-w-[1200px] mx-auto">
         <div className="section-label mb-4">Get in Touch</div>
 
-        {/* Big CTA headline */}
         <div className="mb-16">
           <h2
             className="font-display text-primary leading-[0.9] mb-6"
@@ -64,22 +56,18 @@ export function ConnectSection() {
             <br />
             <span
               className="italic"
-              style={{
-                WebkitTextStroke: "1px rgba(240,236,228,0.4)",
-                color: "transparent",
-              }}
+              style={{ WebkitTextStroke: "1.5px rgba(26,23,20,0.25)", color: "transparent" }}
             >
               something.
             </span>
           </h2>
           <p className="text-secondary font-light max-w-md text-base leading-relaxed">
-            Whether you&apos;re looking for a Technical Program Manager, want to collaborate on a 
+            Whether you&apos;re looking for a Technical Program Manager, want to collaborate on a
             project, or just want to talk tech — reach out.
           </p>
         </div>
 
-        {/* Links grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-border mb-16 shadow-sm">
           {[
             {
               category: "Profile",
@@ -103,10 +91,10 @@ export function ConnectSection() {
                 { label: "Schedule a Call", href: `mailto:${profile.email}`, external: false },
               ],
             },
-          ].map((group, i) => (
+          ].map((group) => (
             <div
               key={group.category}
-              className="p-8 border-b md:border-b-0 md:border-r border-border last:border-r-0"
+              className="p-8 border-b md:border-b-0 md:border-r border-border last:border-r-0 bg-white"
             >
               <div className="section-label mb-6">{group.category}</div>
               <div className="space-y-4">
@@ -119,9 +107,7 @@ export function ConnectSection() {
                     className="flex items-center justify-between group text-secondary hover:text-primary transition-colors duration-200 text-sm font-light"
                   >
                     <span>{link.label}</span>
-                    <span className="text-muted group-hover:text-accent transition-colors duration-200 group-hover:translate-x-1 transition-transform">
-                      →
-                    </span>
+                    <span className="text-muted group-hover:text-accent transition-colors duration-200 group-hover:translate-x-1 transition-transform">→</span>
                   </a>
                 ))}
               </div>
@@ -129,11 +115,10 @@ export function ConnectSection() {
           ))}
         </div>
 
-        {/* Magnetic email CTA */}
         <div className="flex flex-col md:flex-row items-center gap-8">
           <MagneticButton
             href={`mailto:${profile.email}`}
-            className="group bg-accent text-bg px-10 py-5 font-mono text-sm font-medium tracking-wider uppercase hover:bg-accent-dim"
+            className="group bg-accent text-white px-10 py-5 font-mono text-sm font-medium tracking-wider uppercase hover:bg-accent-dim"
           >
             Send a Message
             <span className="group-hover:translate-x-1 transition-transform duration-200">↗</span>

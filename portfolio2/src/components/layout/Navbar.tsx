@@ -7,6 +7,7 @@ const navItems = [
   { href: "#projects", label: "Projects" },
   { href: "#experience", label: "Experience" },
   { href: "#achievements", label: "Achievements" },
+  { href: "#education", label: "Education" },
   { href: "#connect", label: "Connect" },
 ];
 
@@ -17,9 +18,8 @@ export function Navbar() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
-
-      const sections = ["projects", "experience", "achievements", "connect"];
-      for (const id of sections.reverse()) {
+      const sections = ["projects", "experience", "achievements", "education", "connect"];
+      for (const id of [...sections].reverse()) {
         const el = document.getElementById(id);
         if (el && window.scrollY >= el.offsetTop - 120) {
           setActiveSection(id);
@@ -35,9 +35,7 @@ export function Navbar() {
     if (href.startsWith("#")) {
       e.preventDefault();
       const el = document.querySelector(href);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -48,19 +46,14 @@ export function Navbar() {
       }`}
     >
       <nav className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
         <Link
           href="/"
           className="font-display text-lg text-primary hover:text-accent transition-colors duration-200"
-          onClick={(e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
+          onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
         >
           VD<span className="text-accent">.</span>
         </Link>
 
-        {/* Nav links */}
         <ul className="hidden md:flex items-center gap-8">
           {navItems.map(({ href, label }) => {
             const sectionId = href.replace("#", "");
@@ -75,19 +68,16 @@ export function Navbar() {
                   }`}
                 >
                   {label}
-                  {isActive && (
-                    <span className="ml-2 inline-block w-1 h-1 rounded-full bg-accent" />
-                  )}
+                  {isActive && <span className="ml-2 inline-block w-1 h-1 rounded-full bg-accent" />}
                 </a>
               </li>
             );
           })}
         </ul>
 
-        {/* CTA */}
         <a
           href="mailto:vaibhav.dhanorkar@example.com"
-          className="hidden md:inline-flex items-center gap-2 px-4 py-2 border border-border-light text-primary text-xs font-mono tracking-widest uppercase hover:border-accent hover:text-accent transition-all duration-200"
+          className="hidden md:inline-flex items-center gap-2 px-4 py-2 border border-border text-primary text-xs font-mono tracking-widest uppercase hover:border-accent hover:text-accent transition-all duration-200"
         >
           Hire Me
         </a>
