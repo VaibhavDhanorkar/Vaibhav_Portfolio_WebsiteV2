@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { experiences } from "@/data/experience";
+import type { Experience } from "@/types/content";
 
-export function ExperienceSection() {
-  const [activeId, setActiveId] = useState("charter");
+export function ExperienceSection({ experiences }: { experiences: Experience[] }) {
+  const [activeId, setActiveId] = useState(experiences[0]?.id ?? "");
   const active = experiences.find(e => e.id === activeId) || experiences[0];
 
   return (
@@ -82,8 +82,7 @@ export function ExperienceSection() {
           <div className="section-label mb-6 text-center text-ink-muted">Companies I&apos;ve Worked With</div>
           <div className="flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
             <div className="marquee-track">
-              {["Charter Communications","Capgemini","Cognizant","Syntel","Tech Mahindra",
-                "Charter Communications","Capgemini","Cognizant","Syntel","Tech Mahindra"].map((c, i) => (
+              {experiences.flatMap((e) => [e.company, e.company]).map((c, i) => (
                 <span key={i} className="font-display text-2xl text-ink-faint hover:text-ink-soft transition-colors shrink-0" style={{ fontWeight:300 }}>
                   {c}<span className="text-gold ml-6 mr-3">·</span>
                 </span>

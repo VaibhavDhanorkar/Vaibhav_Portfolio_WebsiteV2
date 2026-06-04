@@ -3,6 +3,10 @@ import "./globals.css";
 import { Navbar }       from "@/components/layout/Navbar";
 import { Footer }       from "@/components/layout/Footer";
 import { CustomCursor } from "@/components/ui/CustomCursor";
+import { getEnv } from "@/lib/env";
+import { getProfile } from "@/lib/sanity/queries";
+
+const env = getEnv();
 
 export const metadata: Metadata = {
   title: "Vaibhav Dhanorkar — Technical Program Manager | Builder",
@@ -14,7 +18,7 @@ export const metadata: Metadata = {
     title: "Vaibhav Dhanorkar — Technical Program Manager | Builder",
     description: "Portfolio of Vaibhav Dhanorkar — Technical Program Manager, IEEE Senior Member, and builder of CJI and Velox.",
     type: "website",
-    url: "https://vaibhavdhanorkar.vercel.app",
+    url: env.NEXT_PUBLIC_SITE_URL,
   },
   twitter: {
     card: "summary_large_image",
@@ -23,14 +27,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const profile = await getProfile();
+
   return (
     <html lang="en">
       <body className="grain bg-ivory text-ink font-sans antialiased">
         <CustomCursor />
-        <Navbar />
+        <Navbar email={profile.email} />
         <main>{children}</main>
-        <Footer />
+        <Footer profile={profile} />
       </body>
     </html>
   );

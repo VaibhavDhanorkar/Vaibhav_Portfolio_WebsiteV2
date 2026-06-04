@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { profile } from "@/data/profile";
+import type { Profile } from "@/types/content";
 
-export function HeroSection() {
+export function HeroSection({ profile }: { profile: Profile }) {
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const mouseRef   = useRef({ x: -999, y: -999 });
   const [mounted, setMounted] = useState(false);
@@ -99,7 +99,7 @@ export function HeroSection() {
           style={{ transitionDelay:"80ms" }}
         >
           <div className="gold-line w-12" />
-          <span className="section-label">Technical Program Manager · Builder</span>
+          <span className="section-label">{profile.headline}</span>
           <div className="gold-line flex-1 max-w-[60px]" />
         </div>
 
@@ -109,7 +109,7 @@ export function HeroSection() {
             className={`font-display text-ink leading-[0.87] transition-all duration-1000 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"}`}
             style={{ fontSize:"clamp(4.5rem,13vw,14rem)", letterSpacing:"-0.035em", transitionDelay:"200ms", fontWeight:300 }}
           >
-            Vaibhav
+            {profile.firstName}
           </h1>
         </div>
         <div className="overflow-hidden mb-10">
@@ -121,7 +121,7 @@ export function HeroSection() {
               WebkitTextStroke:"1.5px rgba(28,22,8,0.28)",
             }}
           >
-            Dhanorkar
+            {profile.lastName}
           </h1>
         </div>
 

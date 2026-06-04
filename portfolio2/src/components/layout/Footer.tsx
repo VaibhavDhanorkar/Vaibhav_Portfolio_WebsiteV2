@@ -1,6 +1,6 @@
-import { profile } from "@/data/profile";
+import type { Profile } from "@/types/content";
 
-export function Footer() {
+export function Footer({ profile }: { profile: Profile }) {
   return (
     <footer className="border-t border-border py-12 px-6 bg-ivory-dark/30">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
@@ -10,7 +10,7 @@ export function Footer() {
           </span>
           <span className="text-ink-faint text-xs font-mono">|</span>
           <span className="text-ink-muted text-xs font-mono">
-            © {new Date().getFullYear()} Vaibhav Dhanorkar
+            © {new Date().getFullYear()} {profile.name}
           </span>
         </div>
         <div className="flex items-center gap-6">

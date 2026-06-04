@@ -1,4 +1,6 @@
-export const profile = {
+import type { Profile } from "@/types/content";
+
+export const profile: Profile = {
   name: "Vaibhav Dhanorkar",
   firstName: "Vaibhav",
   lastName: "Dhanorkar",

@@ -1,6 +1,6 @@
-import { education } from "@/data/achievements";
+import type { Education } from "@/types/content";
 
-export function EducationSection() {
+export function EducationSection({ education }: { education: Education[] }) {
   return (
     <section id="education" className="py-32 px-6">
       <div className="max-w-[1200px] mx-auto">

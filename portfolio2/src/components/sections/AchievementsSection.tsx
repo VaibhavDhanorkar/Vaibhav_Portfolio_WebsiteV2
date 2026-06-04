@@ -1,6 +1,6 @@
-import { achievements } from "@/data/achievements";
+import type { Achievement } from "@/types/content";
 
-export function AchievementsSection() {
+export function AchievementsSection({ achievements }: { achievements: Achievement[] }) {
   return (
     <section id="achievements" className="py-32 px-6 bg-ivory-dark/40">
       <div className="max-w-[1200px] mx-auto">

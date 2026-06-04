@@ -11,7 +11,7 @@ const navItems = [
   { href:"#connect",      label:"Connect"       },
 ];
 
-export function Navbar() {
+export function Navbar({ email }: { email: string }) {
   const [scrolled, setScrolled]         = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -59,7 +59,7 @@ export function Navbar() {
           })}
         </ul>
 
-        <a href="mailto:vaibhav.dhanorkar@example.com"
+        <a href={`mailto:${email}`}
           className="hidden md:inline-flex items-center px-4 py-2 border border-border text-ink text-[0.68rem] font-mono tracking-widest uppercase hover:border-gold hover:text-gold transition-all duration-200">
           Hire Me
         </a>

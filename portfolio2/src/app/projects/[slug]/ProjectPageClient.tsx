@@ -2,24 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import type { Project } from "@/data/projects";
-
-const comparisonRows: Record<string, { category:string; problem:string; solution:string }[]> = {
-  cji: [
-    { category:"Jira Reporting",   problem:"Hours of manual filtering, exporting, and pivot tables", solution:"Ask in plain English. Get answers in under 7ms." },
-    { category:"Data Dashboards",  problem:"Static reports that require manual queries and refreshes", solution:"Conversational AI with 36+ intents and real-time intelligence." },
-  ],
-  velox: [
-    { category:"Trading Signals",  problem:"Public platforms surface noise from aggregated feeds", solution:"Proprietary on-chain analysis. Pre-interpreted. Actionable." },
-    { category:"Signal Delivery",  problem:"Requires constant monitoring and manual interpretation", solution:"Zero UI needed. Signals arrive ready to act on, 24/7." },
-  ],
-};
+import type { Project } from "@/types/content";
 
 export function ProjectPageClient({ project }: { project: Project }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  const rows = comparisonRows[project.slug] ?? [];
+  const rows = project.comparisons ?? [];
 
   return (
     <div className="min-h-screen bg-ivory pt-24 pb-32">

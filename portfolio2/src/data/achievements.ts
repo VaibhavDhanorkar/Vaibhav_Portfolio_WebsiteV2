@@ -1,22 +1,6 @@
-export type Achievement = {
-  id: string;
-  icon: string;
-  title: string;
-  org: string;
-  detail: string;
-  year?: string;
-  type: "award" | "certification" | "membership";
-};
+import type { Achievement, Education } from "@/types/content";
 
-export type Education = {
-  id: string;
-  icon: string;
-  degree: string;
-  field: string;
-  institution: string;
-  detail: string;
-  type: "masters" | "bachelors" | "certification";
-};
+export type { Achievement, Education };
 
 export const achievements: Achievement[] = [
   {

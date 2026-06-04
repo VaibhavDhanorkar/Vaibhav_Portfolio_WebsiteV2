@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { profile } from "@/data/profile";
+import type { Profile, Project } from "@/types/content";
 
 function MagneticBtn({ children, href, className, external }: {
   children: React.ReactNode; href: string; className?: string; external?: boolean;
@@ -23,13 +23,12 @@ function MagneticBtn({ children, href, className, external }: {
   );
 }
 
-export function ConnectSection() {
+export function ConnectSection({ profile, projects }: { profile: Profile; projects: Project[] }) {
   return (
     <section id="connect" className="py-32 px-6 bg-ivory-dark/40">
       <div className="max-w-[1200px] mx-auto">
         <div className="section-label mb-4">Get in Touch</div>
 
-        {/* Big headline */}
         <div className="mb-16">
           <h2 className="font-display text-ink leading-[0.88] mb-6"
             style={{ fontSize:"clamp(3rem,8vw,8rem)", letterSpacing:"-0.035em", fontWeight:300 }}>
@@ -45,7 +44,6 @@ export function ConnectSection() {
           </p>
         </div>
 
-        {/* Links grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 border border-border shadow-sm mb-14">
           {[
             { category:"Profile", links:[
@@ -53,12 +51,13 @@ export function ConnectSection() {
               { label:"GitHub",   href:profile.social.github,   ext:true },
               { label:"Email",    href:`mailto:${profile.email}`, ext:false },
             ]},
-            { category:"Projects", links:[
-              { label:"CJI — Conversational Jira Intelligence", href:"/projects/cji", ext:false },
-              { label:"Velox — Private Signal Platform",        href:"/projects/velox", ext:false },
-            ]},
+            { category:"Projects", links: projects.map((p) => ({
+              label: `${p.title} — ${p.subtitle}`,
+              href: `/projects/${p.slug}`,
+              ext: false,
+            }))},
             { category:"Quick Hire", links:[
-              { label:"Download Resume",  href:"#", ext:false },
+              { label:"Download Resume",  href:"/resume.pdf", ext:false },
               { label:"Schedule a Call",  href:`mailto:${profile.email}`, ext:false },
             ]},
           ].map(g => (
@@ -77,7 +76,6 @@ export function ConnectSection() {
           ))}
         </div>
 
-        {/* Magnetic CTA */}
         <div className="flex flex-col md:flex-row items-center gap-8">
           <MagneticBtn href={`mailto:${profile.email}`}
             className="group bg-ink text-ivory px-10 py-5 font-sans text-sm font-medium tracking-wider uppercase hover:bg-ink-mid">

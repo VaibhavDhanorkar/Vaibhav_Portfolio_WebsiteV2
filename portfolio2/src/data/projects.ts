@@ -1,22 +1,6 @@
-export type Project = {
-  slug: string;
-  title: string;
-  subtitle: string;
-  status: string;
-  category: "Professional" | "Personal";
-  description: string;
-  purpose: string;
-  icon: string;
-  tags: string[];
-  techStack: string[];
-  githubUrl?: string;
-  liveUrl?: string;
-  featured: boolean;
-  year: number;
-  problem: string;
-  solution: string;
-  impact: string[];
-};
+import type { Project } from "@/types/content";
+
+export type { Project };
 
 export const projects: Project[] = [
   {
@@ -44,6 +28,10 @@ export const projects: Project[] = [
     techStack: ["Python", "FastAPI", "HTMX", "ML/NLP", "SQLite", "Chart.js", "Docker"],
     featured: true,
     year: 2025,
+    comparisons: [
+      { category: "Jira Reporting", problem: "Hours of manual filtering, exporting, and pivot tables", solution: "Ask in plain English. Get answers in under 7ms." },
+      { category: "Data Dashboards", problem: "Static reports that require manual queries and refreshes", solution: "Conversational AI with 36+ intents and real-time intelligence." },
+    ],
   },
   {
     slug: "velox",
@@ -70,6 +58,10 @@ export const projects: Project[] = [
     techStack: ["Python", "Solana", "WebSocket", "Telegram", "Private Dashboard"],
     featured: true,
     year: 2026,
+    comparisons: [
+      { category: "Trading Signals", problem: "Public platforms surface noise from aggregated feeds", solution: "Proprietary on-chain analysis. Pre-interpreted. Actionable." },
+      { category: "Signal Delivery", problem: "Requires constant monitoring and manual interpretation", solution: "Zero UI needed. Signals arrive ready to act on, 24/7." },
+    ],
   },
 ];
 

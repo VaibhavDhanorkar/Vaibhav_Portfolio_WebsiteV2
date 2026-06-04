@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import type { Metadata } from "next";
-import { projects } from "@/data/projects";
+import { getProjects, getProjectBySlug } from "@/lib/sanity/queries";
 import { ProjectPageClient } from "./ProjectPageClient";
 
 type Params = { slug: string };
 
 export async function generateStaticParams() {
+  const projects = await getProjects();
   return projects.map((p) => ({ slug: p.slug }));
 }
 
@@ -16,7 +16,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return {};
   return {
     title: `${project.title} — ${project.subtitle} | Vaibhav Dhanorkar`,
@@ -35,7 +35,7 @@ export default async function ProjectPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
   return <ProjectPageClient project={project} />;

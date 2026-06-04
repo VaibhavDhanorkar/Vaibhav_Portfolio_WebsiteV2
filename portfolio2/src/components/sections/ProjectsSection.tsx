@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { projects, allTags, type Project } from "@/data/projects";
+import type { Project } from "@/types/content";
 
 function ProjectCard({ project }: { project: Project }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -91,7 +91,7 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-export function ProjectsSection() {
+export function ProjectsSection({ projects, allTags }: { projects: Project[]; allTags: string[] }) {
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
   const filtered = activeTag ? projects.filter(p => p.tags.includes(activeTag)) : projects;
