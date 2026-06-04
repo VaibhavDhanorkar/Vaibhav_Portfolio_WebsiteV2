@@ -62,7 +62,7 @@ export function ConnectSection({ profile, projects }: { profile: Profile; projec
             ]},
           ].map(g => (
             <div key={g.category} className="p-8 border-b md:border-b-0 md:border-r border-border last:border-r-0 bg-ivory">
-              <div className="section-label mb-6">{g.category}</div>
+              <div className="section-label-sm mb-6">{g.category}</div>
               <div className="space-y-4">
                 {g.links.map(l => (
                   <a key={l.label} href={l.href} target={l.ext?"_blank":undefined} rel={l.ext?"noopener noreferrer":undefined}

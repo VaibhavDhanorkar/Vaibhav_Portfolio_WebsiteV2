@@ -35,7 +35,10 @@ body {
   color: var(--ink);
   font-family: 'Outfit', system-ui, sans-serif;
   overflow-x: hidden;
-  cursor: none;
+}
+
+@media (pointer: fine) {
+  body { cursor: none; }
 }
 
 /* ── Custom cursor ───────────────────────────────── */
@@ -108,6 +111,14 @@ body {
 
 .section-label {
   font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.section-label-sm {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.62rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -127,7 +138,6 @@ body {
   letter-spacing: 0.04em;
   color: var(--ink-soft);
   transition: all 0.2s ease;
-  cursor: none;
 }
 .tag:hover, .tag.active {
   background: rgba(184,146,42,0.09);
@@ -153,8 +163,51 @@ body {
   box-shadow: 0 8px 48px rgba(184,146,42,0.08), 0 2px 12px rgba(28,22,8,0.06);
 }
 
-/* ── Cursor suppression on interactives ──────────── */
-a, button, [role="button"] { cursor: none; }
+/* ── Cursor suppression on interactives (fine pointer only) ── */
+@media (pointer: fine) {
+  a, button, [role="button"], .tag { cursor: none; }
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  body { cursor: auto; }
+  a, button, [role="button"] { cursor: pointer; }
+  .tag { cursor: pointer; }
+  .cursor-dot,
+  .cursor-ring { display: none; }
+}
+
+/* ── Project carousel ────────────────────────────── */
+.carousel-track {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 1.5rem calc(50% - 11rem);
+}
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-slide {
+  flex: 0 0 min(22rem, 85vw);
+  scroll-snap-align: center;
+  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+  transform: scale(0.92);
+  opacity: 0.5;
+}
+
+.carousel-slide-active {
+  transform: scale(1);
+  opacity: 1;
+  box-shadow: 0 12px 48px rgba(184, 146, 42, 0.14), 0 4px 16px rgba(28, 22, 8, 0.08);
+  border-color: rgba(184, 146, 42, 0.55) !important;
+}
 
 /* ── Magnetic btn base ───────────────────────────── */
 .magnetic-btn {

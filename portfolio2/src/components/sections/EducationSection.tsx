@@ -12,14 +12,13 @@ export function EducationSection({ education }: { education: Education[] }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {education.map((edu, i) => (
             <div key={edu.id} className="card group relative overflow-hidden p-10">
-              {/* Large ghost number */}
               <div className="absolute top-4 right-6 font-display text-8xl text-ivory-deep select-none pointer-events-none transition-colors duration-300 group-hover:text-gold-pale" style={{ fontWeight:300 }}>
                 0{i+1}
               </div>
 
               <div className="text-5xl mb-6">{edu.icon}</div>
 
-              <div className="section-label mb-2">{edu.type === "masters" ? "Graduate" : "Undergraduate"}</div>
+              <div className="section-label-sm mb-2">{edu.type === "masters" ? "Graduate" : "Undergraduate"}</div>
 
               <h3 className="font-display text-4xl text-ink leading-none mb-1" style={{ fontWeight:300 }}>{edu.degree}</h3>
               <p className="font-display text-xl text-ink-soft italic mb-3" style={{ fontWeight:300 }}>{edu.field}</p>

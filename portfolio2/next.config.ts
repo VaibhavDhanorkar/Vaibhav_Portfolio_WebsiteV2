@@ -10,6 +10,7 @@ const requiredAssets = env.REQUIRED_ASSETS
 validateAssets({ requiredAssets });
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["sanity", "next-sanity"],
   images: {
     unoptimized: true,
   },
